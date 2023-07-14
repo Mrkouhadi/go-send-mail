@@ -20,12 +20,12 @@ import (
 
     func main() {
 
-        from := "me@here.com"                             // the email sender
-        // identity, senderEmail, password,serverName
-        auth := smtp.PlainAuth("", from, "", "localhost")
+        from := "me@here.com"
 
-        // adress, auth, senderEmail, recipientsEmails, content
-        err := smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("hello world"))
+        auth := smtp.PlainAuth("", from, "", "localhost")  // identity, senderEmail, password,serverName
+
+
+        err := smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("hello world"))  // adress, auth, senderEmail, recipientsEmails, content
         if err != nil {
             log.Println(err)
         }
