@@ -9,3 +9,26 @@
 - Install Mailhog on your computer and run it.
 - Paste this link in the browser: http://localhost:8025/
 - Head to this link: http://localhost:8080/send-mail
+
+### How to send a mail with ONLY standard library :
+
+`
+import (
+"log"
+"net/smtp"
+)
+
+    func main() {
+
+        from := "me@here.com"                             // the email sender
+        // identity, senderEmail, password,serverName
+        auth := smtp.PlainAuth("", from, "", "localhost")
+
+        // adress, auth, senderEmail, recipientsEmails, content
+        err := smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("hello world"))
+        if err != nil {
+            log.Println(err)
+        }
+    }
+
+`
