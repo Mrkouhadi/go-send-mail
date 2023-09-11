@@ -12,7 +12,7 @@
 
 ### How to send a mail with ONLY standard library :
 
-`
+```
 package main
 
 import (
@@ -41,9 +41,9 @@ func sendMailSimpleHtml(subject, templatePath string, receivers []string) {
 func main() {
     sendMailSimpleHtml("Notification of registragion Email", "./mail-template.html", []string{"k@k.com"})
 }
-`
-html:
-`
+```
+
+html:```
 
 <!DOCTYPE html>
 <html lang="en">
@@ -57,4 +57,4 @@ html:
     <h1>Hello {{.Name}}</h1>
 </body>
 </html>
-`
+```
