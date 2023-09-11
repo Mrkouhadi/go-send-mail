@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// SendMailHandler is the handler that we hit when we wanna send an email
+// SendMailHandler is the handler that call when we hit '/send-mail' to send an email
 func SendMailHandler(w http.ResponseWriter, req *http.Request) {
 	name := "Bakr Kouhadi"      // a name
 	someDate := "2023-09-14"    // dummy date
@@ -22,7 +22,7 @@ func SendMailHandler(w http.ResponseWriter, req *http.Request) {
 		From:     "sender-kouhadi@example.com",
 		Subject:  "Confirming your reservation",
 		Content:  mailContent,
-		Template: "mail-template.html", // or any name of your Mail template
+		Template: "mail-template.html",
 	}
 
 	app.MailsChannel <- msg
