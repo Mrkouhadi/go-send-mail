@@ -20,6 +20,7 @@ func SendMailHandler(w http.ResponseWriter, req *http.Request) {
 	msg := MailData{
 		To:       "receiver-bryan-kouhadi@example.com",
 		From:     "sender-kouhadi@example.com",
+		Cc:       "CC@cc.com",
 		Subject:  "Confirming your reservation",
 		Content:  mailContent,
 		Template: "mail-template.html",

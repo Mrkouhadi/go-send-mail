@@ -21,8 +21,11 @@ func ListenForMails() {
 }
 func SendMail(msg MailData) {
 	server := mail.NewSMTPClient()
-	server.Host = "localhost"
-	server.Port = 1025
+	server.Username = "test@example.com"
+	server.Password = "examplepass"
+	server.Encryption = mail.EncryptionSTARTTLS
+	server.Host = "localhost" // or "smtp.example.com"
+	server.Port = 1025        // or 587 as in the docs
 	server.KeepAlive = false
 	server.ConnectTimeout = 10 * time.Second
 	server.SendTimeout = 10 * time.Second
@@ -33,7 +36,13 @@ func SendMail(msg MailData) {
 	}
 
 	email := mail.NewMSG()
-	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject)
+	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject).AddCc(msg.Cc)
+	// add inline
+	email.Attach(&mail.File{FilePath: "./img.png", Name: "img.png", Inline: true})
+	email.Attach(&mail.File{FilePath: "./doc.pdf", Name: "doc.pdf", Inline: true})
+	// also you can set Delivery Status Notification (DSN) (only is set when server supports DSN)
+	// email.SetDSN([]mail.DSN{mail.SUCCESS, mail.FAILURE}, false)
+
 	// we haven't specified the template do this
 	if msg.Template == "" {
 		email.SetBody(mail.TextHTML, msg.Content)
