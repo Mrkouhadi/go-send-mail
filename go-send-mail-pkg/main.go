@@ -11,7 +11,7 @@ func main() {
 	mailingChan := make(chan MailData)
 	app.MailsChannel = mailingChan
 	defer close(app.MailsChannel)
-	ListenForMails()
+	go ListenForMails()
 	// run our local server
 	http.HandleFunc("/send-mail", SendMailHandler)
 	http.ListenAndServe(":8080", nil)
