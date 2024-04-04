@@ -15,15 +15,18 @@ func ListenForMails() {
 	go func() {
 		for {
 			msg := <-app.MailsChannel
-			SendMail(msg)
+			sendMsg(msg)
 		}
 	}()
 }
-func SendMail(msg MailData) {
+func sendMsg(msg MailData) {
 	server := mail.NewSMTPClient()
+	//* Things have been added from the docs *//
 	server.Username = "test@example.com"
 	server.Password = "examplepass"
 	server.Encryption = mail.EncryptionSTARTTLS
+	// *THE END* //
+
 	server.Host = "localhost" // or "smtp.example.com"
 	server.Port = 1025        // or 587 as in the docs
 	server.KeepAlive = false
@@ -32,37 +35,50 @@ func SendMail(msg MailData) {
 
 	client, err := server.Connect()
 	if err != nil {
-		fmt.Println(err)
+		// handle errors
+		return
 	}
 
-	email := mail.NewMSG()
-	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject).AddCc(msg.Cc)
-	// add inline
-	email.Attach(&mail.File{FilePath: "./img.png", Name: "img.png", Inline: true})
-	email.Attach(&mail.File{FilePath: "./doc.pdf", Name: "doc.pdf", Inline: true})
-	// also you can set Delivery Status Notification (DSN) (only is set when server supports DSN)
-	// email.SetDSN([]mail.DSN{mail.SUCCESS, mail.FAILURE}, false)
-
-	// we haven't specified the template do this
-	if msg.Template == "" {
-		email.SetBody(mail.TextHTML, msg.Content)
-	} else {
-		// otherwise get the specified template from disk
+	// Read the email template file outside of the loop
+	var templateContent string
+	if msg.Template != "" {
 		data, err := os.ReadFile(fmt.Sprintf("./email-templates/%s", msg.Template))
 		if err != nil {
-			fmt.Println(err)
+			// handle errors
+			return
 		}
-		// since data is of type array of bytes ([]bytes) we need to convert it
-		mailTmpl := string(data)
-		//args:  string to be replace in, txt to be replaced, content, how many times
-		msgToSend := strings.Replace(mailTmpl, "[%body%]", msg.Content, 1)
-		email.SetBody(mail.TextHTML, msgToSend)
+		// Convert template data to string
+		templateContent = string(data)
 	}
 
-	err = email.Send(client)
-	if err != nil {
-		log.Println(err)
-	} else {
-		log.Println("EMAIL HAS BEEN SENT SUCCESFULLY")
+	// Iterate over each recipient and send the email individually
+	for _, recipient := range msg.To {
+		email := mail.NewMSG()
+		email.SetFrom(msg.From).AddTo(recipient).AddCc(msg.Cc).SetSubject(msg.Subject)
+		// Add inline attachments
+		email.Attach(&mail.File{FilePath: "./img.png", Name: "img.png", Inline: true})
+		email.Attach(&mail.File{FilePath: "./doc.pdf", Name: "doc.pdf", Inline: true})
+		// 	// also you can set Delivery Status Notification (DSN) (only is set when server supports DSN)
+		// email.SetDSN([]mail.DSN{mail.SUCCESS, mail.FAILURE}, false)
+
+		// Set custom headers if needed
+		email.AddHeader("X-Priority", "1") // Example of adding a custom header
+
+		// Set email body using template content or provided content
+		if msg.Template == "" {
+			email.SetBody(mail.TextHTML, msg.Content)
+		} else {
+			// Replace template placeholders with actual content
+			msgToSend := strings.Replace(templateContent, "[%body%]", msg.Content, 1)
+			email.SetBody(mail.TextHTML, msgToSend)
+		}
+
+		// Send the email
+		err = email.Send(client)
+		if err != nil {
+			log.Println(err)
+		} else {
+			log.Println("EMAIL HAS BEEN SENT SUCCESSFULLY")
+		}
 	}
 }

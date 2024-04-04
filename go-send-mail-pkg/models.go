@@ -1,7 +1,7 @@
 package main
 
 type MailData struct {
-	To       string
+	To       []string
 	From     string
 	Cc       string
 	Subject  string

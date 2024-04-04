@@ -18,7 +18,7 @@ func SendMailHandler(w http.ResponseWriter, req *http.Request) {
 	`, name, someDate, anotherDate)
 
 	msg := MailData{
-		To:       "receiver-bryan-kouhadi@example.com",
+		To:       []string{"fakeemail1@fake.com", "fakeemail2@fake.com"}, // Array of email addresses
 		From:     "sender-kouhadi@example.com",
 		Cc:       "CC@cc.com",
 		Subject:  "Confirming your reservation",
