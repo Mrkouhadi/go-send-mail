@@ -51,8 +51,11 @@ func sendMsg(msg MailData) {
 		email := mail.NewMSG()
 		email.SetFrom(msg.From).AddTo(recipient).AddCc(msg.Cc).SetSubject(msg.Subject)
 		// Add inline attachments
+
+		// FIXME: can't add attachements
 		// email.Attach(&mail.File{FilePath: "./img.png", Name: "img.png", Inline: true})
 		// email.Attach(&mail.File{FilePath: "./doc.pdf", Name: "doc.pdf", Inline: true})
+
 		// 	// also you can set Delivery Status Notification (DSN) (only is set when server supports DSN)
 		// email.SetDSN([]mail.DSN{mail.SUCCESS, mail.FAILURE}, false)
 
